@@ -40,7 +40,7 @@ std::ostream& operator<<(std::ostream& os, const LinkedList& list){
 }
 
 /// Accessing Values ///
-int LinkedList::at(int index){
+char* LinkedList::at(int index){
   if(index > length){ //If they're  trying to access a value  that doesnt exist
     std::cout << "Out of bounds error during at()" << std::endl;
     return 0; 
@@ -56,12 +56,12 @@ int LinkedList::at(int index){
 }
 
 //Overloads the [] operator so list[index] is equivilent to list.at(index)
-LinkedList::operator[](int index){
+char* LinkedList::operator[](int index){
   return at(index); //Just uses at()
 }
 
 /// Adding/Removing values ///
-void LinkedList::insert(int index, int data){
+void LinkedList::insert(int index, char* data){
   Node* f = nodeAt(index - 1); //Sets the first value to the node before the index you're inserting to, at() will return 0 if this is the beginning of the list
   Node* s = nodeAt(index); //Sets the node to where you want to insert, at() will return 0 if this is the end of the list
 
@@ -107,16 +107,28 @@ void LinkedList::clear(){ //Clears the list using remove()
     remove(0);
 }
 
-void LinkedList::deleteData(int data){ //Delete's all students in the list matching the pointer
+void LinkedList::deleteData(char* data){ //Delete's all students in the list matching the pointer
   for(int i = 0; i < length; i++) //Loop over list
-    if(at(i) == data) //If we found a matching node
+    if(strcmp(at(i), data) == 0) //If we found a matching node
       remove(i); //Remove them
 }
 //Append just calls insert() at the end of the list
-void LinkedList::append(int num){
-  this->insert(length, num);
+void LinkedList::append(char* data){
+  this->insert(length, data);
 }
 
+//Appends another linked list to this list using append(char*) 
+void LinkedList::append(LinkedList* list, int direction){
+  if(direction > 0)
+    for(int i = 0; i < list->size(); i++)
+      this->append(list->at(i));
+  else
+    for(int i = list->size() - 1; i >= 0; i--)
+      this->append(list->at(i));
+}
+void LinkedList::pop(){
+  this->remove(size() - 1);
+}
 /// Other ///
 int LinkedList::size(){ //Returns length
   return this->length;

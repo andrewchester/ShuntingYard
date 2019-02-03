@@ -4,9 +4,8 @@
 #include <iostream>
 
 class LinkedList {
- 
  struct Node{
-   int data;
+   char* data;
    Node* next;
    Node* previous;
  };
@@ -21,15 +20,17 @@ class LinkedList {
 
   friend std::ostream& operator<<(std::ostream& os, const LinkedList& list); //Printing out the list using << 
 
-  int operator[] (int); //Overloads the [] operator
-  int at(int index); //Accesses a node in the list
+  char* operator[] (int); //Overloads the [] operator
+  char* at(int index); //Accesses a node in the list
 
-  void append(int); //Appends a value to the end, just uses insert() at the end
-  void insert(int index, int data); //Inserts a value to a spot in the list
+  void append(char*); //Appends a value to the end, just uses insert() at the end
+  void append(LinkedList*, int); //Append a LinkedList to another LinkedList
+  void insert(int index, char*); //Inserts a value to a spot in the list
   void remove(int index);  //Removes a node at an index
-  void deleteData(int); //Deletes all students matching the pointer
+  void deleteData(char*); //Deletes all students matching the pointer
   void clear(); //Delete's all nodes from the array
-  int size(); //Returns the size of the list 
+  int size(); //Returns the size of the list
+  void pop();
 
   Node* end(); //Returns the last node in the list
   Node* begin(); //Returns the first node in the list
