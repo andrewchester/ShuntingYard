@@ -16,7 +16,7 @@ class LinkedList {
  Node* nodeAt(int);
  
  public:
-  LinkedList(); //Constructor, defaults first, last, and length to 0
+  LinkedList(); //Constructor, defaults first, last, and length to 0, takes data type to store
 
   friend std::ostream& operator<<(std::ostream& os, const LinkedList& list); //Printing out the list using << 
 

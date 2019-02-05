@@ -6,20 +6,21 @@
 class Shunting {
 	private:
 		struct Node{
-			int data;
+			char* data;
 			char op;
-			Node* child;
-			Node* parent;
+			Node* left;
+			Node* right;
 		};
 		Node* top;
 
 		bool is_operator(char*);
 		int precedence(char*);
-	public:
-		Shunting();
 
 		LinkedList* to_postfix(LinkedList*);
-		LinkedList* to_expression_tree(LinkedList*);
+		Shunting::Node* to_expression_tree(LinkedList*);
+	public:
+		Shunting();
+		void test_function(LinkedList*);
 };
 
 #endif

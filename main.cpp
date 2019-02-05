@@ -28,7 +28,7 @@ int main(){
 	get_input(in);
 	gen_inputstack(input_stack, in);
 
-	s.to_expression_tree(input_stack);
+	s.test_function(input_stack);
 
 	return 0;
 }

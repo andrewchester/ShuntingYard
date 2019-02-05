@@ -1,10 +1,11 @@
+#include <vector>
 #include "shunting.h"
 
 Shunting::Shunting(){
 
 }
 
-bool Shunting::is_operator(char* c){
+bool Shunting::is_operator(char* c){ //Returns a boolean depending on if the token is an operator or not
     char derefc = *c;
     if(derefc == '+' || derefc == '-' || derefc == '/' || derefc == '*' || derefc == '^')
         return true;
@@ -58,15 +59,49 @@ LinkedList* Shunting::to_postfix(LinkedList* input_stack){
     return output_stack;
 }
 
-LinkedList* Shunting::to_expression_tree(LinkedList* input){
+Shunting::Node* Shunting::to_expression_tree(LinkedList* input){
     input = to_postfix(input);
-    LinkedList stack = LinkedList();
+    std::vector<Node*> stack = std::vector<Node*>();
+
+    char* token;
+    Node* top = new Node();
 
     while(input->size() != 0){
-        stack.append(input->at(0));
+        token = input->at(0); //Get the token from the input  
         
+        //Create the node and give it the data
+        Node* newNode = new Node();
+        newNode->data = token; 
+        if(!is_operator(token)){
+            stack.push_back(newNode); //Push the node onto the stack if it's a number
+        }else{
+            //Get the pointers to the previous two nodes in the list
+            Node* left = stack.at(stack.size() - 2);
+            Node* right = stack.at(stack.size() - 1);
 
+            //Assign the node's pointer values to the ones from the list
+            newNode->left = left;
+            newNode->right = right;
 
-        input->remove(0);
+            /* prints the stack at the current iteration
+            std::vector<Node*>::iterator it;
+            for(it = stack.begin(); it != stack.end(); ++it)
+                std::cout << (*it)->data << ' ';
+            std::cout << std::endl;
+            */
+
+            //Remove the last two elements in the list(what should be there is a node pointing to both of them)
+            stack.pop_back();
+            stack.pop_back();
+
+            stack.push_back(newNode); //Adding the new tree node to the stack
+        }
+
+        input->remove(0); //Remove the input thats already been handled from the list
     }
+    return stack.at(0); //We should finish the algorithm with 1 node point at the beginning which should be the top of the tree(or bottom????)
+}
+void Shunting::test_function(LinkedList* input){ //Just for testing private functions
+    Shunting::Node* top_node = to_expression_tree(input);
+    std::cout << top_node->data << std::endl;
 }
