@@ -24,7 +24,7 @@ LinkedList* Shunting::to_postfix(LinkedList* input_stack){
     LinkedList operator_stack = LinkedList();
 
     char* token;
-
+	
     while(input_stack->size() != 0){
         token = input_stack->at(0); //Get the first token on the input stack
         if(std::isdigit(*token)){ //Move the token directly to the output stack if its a number
@@ -33,15 +33,27 @@ LinkedList* Shunting::to_postfix(LinkedList* input_stack){
         if(is_operator(token)){
             /*
                 While loop:
-                    while the operator stack has operators and the precedence of the top of the stack is greater than the token or the precedences are equal and it isn't a left to right reading operator 
-            */
+                    while the operator stack has operators and the precedence of the top of the stack is greater than the token or the precedences are equal and it isn't a right reading operator 
+            
             while(operator_stack.size() > 0 && (precedence(operator_stack.at(operator_stack.size () -1)) > precedence(token) ||
-                   precedence(operator_stack.at(operator_stack.size () -1)) == precedence(token) && *operator_stack.at(operator_stack.size () -1) != '^')){
+                   precedence(operator_stack.at(operator_stack.size () -1)) == precedence(token) && *operator_stack.at(operator_stack.size () -1) != '^')){ //NOT COMPARING TOKEN ONLY HEAD
                 output_stack->append(operator_stack.at(operator_stack.size () -1));
                 operator_stack.pop();
             }
+			*/
+			int headp, tokenp;
+			char* tokenstr = input_stack.at(0);
+			while(operator_stack.size() > 0){
+				headp = precedence(operator_stack.at(operator_stack.size() - 1));
+				tokenp = precedence(tokenstr);
+
+				if(heapd > tokenp || (headp == tokenp && !strcmp(tokenstr, '^'))){
+					output_stack->append(operator_stack.at(operator_stack.size() - 1));
+					operator_stack.pop();
+				}
+			}
             operator_stack.append(token); //Add the token to the operator stack, runs if there's an empty operator stack or the operator we're adding has a higher precedence
-        }
+		}
         if (*token == '('){
             operator_stack.append(token); //Add the ( to the operator stack
         }
