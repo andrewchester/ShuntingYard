@@ -18,9 +18,12 @@ class Shunting {
 
 		LinkedList* to_postfix(LinkedList*);
 		Shunting::Node* to_expression_tree(LinkedList*);
+		void infix(Shunting::Node*);
+		void postfix(Shunting::Node*);
+		void prefix(Shunting::Node*);
 	public:
 		Shunting();
-		void test_function(LinkedList*);
+		void output_handler(LinkedList*);
 };
 
 #endif

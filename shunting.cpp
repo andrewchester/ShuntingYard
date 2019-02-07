@@ -83,13 +83,6 @@ Shunting::Node* Shunting::to_expression_tree(LinkedList* input){
             newNode->left = left;
             newNode->right = right;
 
-            /* prints the stack at the current iteration
-            std::vector<Node*>::iterator it;
-            for(it = stack.begin(); it != stack.end(); ++it)
-                std::cout << (*it)->data << ' ';
-            std::cout << std::endl;
-            */
-
             //Remove the last two elements in the list(what should be there is a node pointing to both of them)
             stack.pop_back();
             stack.pop_back();
@@ -101,7 +94,48 @@ Shunting::Node* Shunting::to_expression_tree(LinkedList* input){
     }
     return stack.at(0); //We should finish the algorithm with 1 node point at the beginning which should be the top of the tree(or bottom????)
 }
-void Shunting::test_function(LinkedList* input){ //Just for testing private functions
-    Shunting::Node* top_node = to_expression_tree(input);
-    std::cout << top_node->data << std::endl;
+void Shunting::infix(Shunting::Node* head_node){
+	if(is_operator(head_node->data)) //Starts by printing an open parenthesis if the token is an operator
+		std::cout << "( ";
+	if(head_node->left != 0) //Goes down the left side
+		infix(head_node->left);
+	std::cout << head_node->data << " "; //Prints out the token
+	if(head_node->right != 0) //Goes down the right side
+		infix(head_node->right);
+	if(is_operator(head_node->data)) //At the end of going through left and right, it will output the closing parenthesis if the token was an operator
+		std::cout << ") ";
+}
+void Shunting::postfix(Shunting::Node* head_node){
+	//Goes into the two child nodes
+	if(head_node->left != 0)
+		postfix(head_node->left);
+	if(head_node->right != 0)
+		postfix(head_node->right);
+	std::cout << head_node->data << " "; //Then prints out the data, hence the name, postfix
+}
+void Shunting::prefix(Shunting::Node* head_node){ //Outputs to prefix
+	std::cout << head_node->data << " "; //Outputs the operator/number first, 
+	//Then goes into the two child nodes afterwards(hence the name, prefix)
+	if(head_node->left != 0)
+		prefix(head_node->left);
+	if(head_node->right != 0)
+		prefix(head_node->right);
+}
+
+void Shunting::output_handler(LinkedList* input){
+	Shunting::Node* head_node = to_expression_tree(input); //Get an expression tree from user given input
+	int type; //Variable for how to output the tree
+
+	std::cout << "How should the expression tree be outputed(1 = infix, 2 = postfix, 3 = prefix): ";
+	std::cin >> type;
+	std::cin.clear();
+	std::cin.ignore(100, '\n');
+
+	if(type == 1){ //if 1, then infix
+		infix(head_node);
+	}else if(type == 2){ //if 2, then postfix
+		postfix(head_node);
+	}else if(type == 3){ //if 3, then prefix
+		prefix(head_node);
+	}
 }

@@ -14,6 +14,7 @@ void gen_inputstack(LinkedList* input, char* in){
 }
 
 void get_input(char* in){
+	std::cout << "Put spaces between each term please" << std::endl;
 	std::cout << "Enter operation: ";
 	std::cin.get(in, 100);
 	std::cin.clear();
@@ -28,7 +29,7 @@ int main(){
 	get_input(in);
 	gen_inputstack(input_stack, in);
 
-	s.test_function(input_stack);
+	s.output_handler(input_stack);
 
 	return 0;
 }
