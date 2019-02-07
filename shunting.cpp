@@ -1,4 +1,5 @@
 #include <vector>
+#include <string.h>
 #include "shunting.h"
 
 Shunting::Shunting(){
@@ -42,12 +43,12 @@ LinkedList* Shunting::to_postfix(LinkedList* input_stack){
             }
 			*/
 			int headp, tokenp;
-			char* tokenstr = input_stack.at(0);
+			char* tokenstr = input_stack->at(0);
 			while(operator_stack.size() > 0){
 				headp = precedence(operator_stack.at(operator_stack.size() - 1));
 				tokenp = precedence(tokenstr);
 
-				if(heapd > tokenp || (headp == tokenp && !strcmp(tokenstr, '^'))){
+				if(headp > tokenp || (headp == tokenp && !strcmp(tokenstr, "^"))){
 					output_stack->append(operator_stack.at(operator_stack.size() - 1));
 					operator_stack.pop();
 				}
