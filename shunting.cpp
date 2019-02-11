@@ -1,43 +1,7 @@
 #include <vector>
 #include <string.h>
 #include "shunting.h"
-/*
-if(std::isdigit(*token)) //Move the token directly to the output stack if its a number
-            output_stack->append(token);
-        if(is_operator(token)){
-			int headp, tokenp;
-            char* headstr = operator_stack.at(operator_stack.size() - 1);
-			while(operator_stack.size() > 0){
-                headp = precedence(headstr);
-				tokenp = precedence(token);
 
-				if((operator_stack.size() > 0) || (headp > tokenp) || (headp == tokenp && *headstr != '^') && (headp != '(')){
-                    output_stack->append(headstr);
-                    operator_stack.pop();
-				}
-			}
-            operator_stack.append(token); //Add the token to the operator stack, runs if there's an empty operator stack or the operator we're adding has a higher precedence
-        }
-        if (*token == '('){
-            operator_stack.append(token); //Add the ( to the operator stack
-        }
-        if(*token == ')'){
-            while(*operator_stack.at(operator_stack.size() - 1) != '('){ //Go back popping operators to the output until we find the (
-                std::cout << "goin for an interation " << operator_stack.size() - 1 << std::endl;
-                output_stack->append(operator_stack.at(operator_stack.size () -1));
-                std::cout << "is it segfaulting here?" << std::endl;
-                operator_stack.pop();
-                if(operator_stack.size() == 0){
-                    std::cout << "breaking" << std::endl;
-                    break;
-                }
-                std::cout << "going for another iteration with an index of " << operator_stack.size() - 1 << std::endl;
-            }
-            if(operator_stack.size() > 0)
-                operator_stack.pop(); //Remove the (
-        }
-
-*/
 Shunting::Shunting(){
 
 }
@@ -56,41 +20,39 @@ int Shunting::precedence(char* o){ //Returns a value for the precedence of an op
     return -1;
 }
 LinkedList* Shunting::to_postfix(LinkedList* input_stack){
+    LinkedList* output_stack = new LinkedList(); //Output stack to hold the final output
+    LinkedList operator_stack = LinkedList(); //Operator stack that holds all the operators
 
-    LinkedList* output_stack = new LinkedList();
-    LinkedList operator_stack = LinkedList();
-
-    char* token;
-	
+    char* token; //Token of current interation
     while(input_stack->size() != 0){
         token = input_stack->at(0); //Get the first token on the input stack
-        if(std::isdigit(*token)){
+        if(std::isdigit(*token)){ //Adds the token if its a digit
             output_stack->append(token);
         }
-        if(is_operator(token)){
-            if(operator_stack.size() > 0 && *token != '(' && *token != ')'){
-                int tokenp = precedence(token), headp = precedence(operator_stack.at(operator_stack.size() - 1));
-                while(operator_stack.size() > 0 && headp > tokenp){
-                    tokenp = precedence(token);
+        if(is_operator(token)){ //If it's an operator
+            if(operator_stack.size() > 0 && *token != '(' && *token != ')'){ //And not parenthesis and also there are operators on the stack
+                int tokenp = precedence(token), headp = precedence(operator_stack.at(operator_stack.size() - 1)); //Calculates precedence for operators
+                while(operator_stack.size() > 0 && headp > tokenp){ //While there are operators and the precedence is higher for the top of the stack than the current token
+                    tokenp = precedence(token); //Recalculate precedences for the while loop condition
                     headp = precedence(operator_stack.at(operator_stack.size() - 1));
                     
-                    output_stack->append(operator_stack.at(operator_stack.size() - 1));
+                    output_stack->append(operator_stack.at(operator_stack.size() - 1)); //Pop the top of the stack from the operator stack to the output stack
                     operator_stack.pop();
                 }
             }
+            operator_stack.append(token); //Adds the token at the end
+        }
+        if(*token == '('){ //Adds it if its a (
             operator_stack.append(token);
         }
-        if(*token == '('){
-            operator_stack.append(token);
-        }
-        if(*token == ')'){
-            while(*operator_stack.at(operator_stack.size() - 1) != '('){
-                output_stack->append(operator_stack.at(operator_stack.size() - 1));
+        if(*token == ')'){ //If it's a )
+            while(*operator_stack.at(operator_stack.size() - 1) != '('){ //Loops back through the operator stack until it finds a corresponding (
+                output_stack->append(operator_stack.at(operator_stack.size() - 1)); //Popping the operators from the operator stack to the output stack
                 operator_stack.pop();
             }
-            operator_stack.pop();
+            operator_stack.pop(); //Pops what should be the (
         }
-        input_stack->remove(0);
+        input_stack->remove(0); //Removes the first element, moving onto the next token
     }
     //When we're done reading from the input stack, add the rest of the operator stack to the output from the top down(-1 signifies the direction)
     output_stack->append(&operator_stack, -1);
