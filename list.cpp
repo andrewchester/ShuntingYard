@@ -127,6 +127,8 @@ void LinkedList::append(LinkedList* list, int direction){
       this->append(list->at(i));
 }
 void LinkedList::pop(){
+  if(size() == 0)
+    return;
   this->remove(size() - 1);
 }
 /// Other ///

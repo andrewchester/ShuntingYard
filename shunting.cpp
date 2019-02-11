@@ -1,7 +1,43 @@
 #include <vector>
 #include <string.h>
 #include "shunting.h"
+/*
+if(std::isdigit(*token)) //Move the token directly to the output stack if its a number
+            output_stack->append(token);
+        if(is_operator(token)){
+			int headp, tokenp;
+            char* headstr = operator_stack.at(operator_stack.size() - 1);
+			while(operator_stack.size() > 0){
+                headp = precedence(headstr);
+				tokenp = precedence(token);
 
+				if((operator_stack.size() > 0) || (headp > tokenp) || (headp == tokenp && *headstr != '^') && (headp != '(')){
+                    output_stack->append(headstr);
+                    operator_stack.pop();
+				}
+			}
+            operator_stack.append(token); //Add the token to the operator stack, runs if there's an empty operator stack or the operator we're adding has a higher precedence
+        }
+        if (*token == '('){
+            operator_stack.append(token); //Add the ( to the operator stack
+        }
+        if(*token == ')'){
+            while(*operator_stack.at(operator_stack.size() - 1) != '('){ //Go back popping operators to the output until we find the (
+                std::cout << "goin for an interation " << operator_stack.size() - 1 << std::endl;
+                output_stack->append(operator_stack.at(operator_stack.size () -1));
+                std::cout << "is it segfaulting here?" << std::endl;
+                operator_stack.pop();
+                if(operator_stack.size() == 0){
+                    std::cout << "breaking" << std::endl;
+                    break;
+                }
+                std::cout << "going for another iteration with an index of " << operator_stack.size() - 1 << std::endl;
+            }
+            if(operator_stack.size() > 0)
+                operator_stack.pop(); //Remove the (
+        }
+
+*/
 Shunting::Shunting(){
 
 }
@@ -28,42 +64,31 @@ LinkedList* Shunting::to_postfix(LinkedList* input_stack){
 	
     while(input_stack->size() != 0){
         token = input_stack->at(0); //Get the first token on the input stack
-        if(std::isdigit(*token)){ //Move the token directly to the output stack if its a number
+        if(std::isdigit(*token)){
             output_stack->append(token);
         }
         if(is_operator(token)){
-            /*
-                While loop:
-                    while the operator stack has operators and the precedence of the top of the stack is greater than the token or the precedences are equal and it isn't a right reading operator 
-            
-            while(operator_stack.size() > 0 && (precedence(operator_stack.at(operator_stack.size () -1)) > precedence(token) ||
-                   precedence(operator_stack.at(operator_stack.size () -1)) == precedence(token) && *operator_stack.at(operator_stack.size () -1) != '^')){ //NOT COMPARING TOKEN ONLY HEAD
-                output_stack->append(operator_stack.at(operator_stack.size () -1));
-                operator_stack.pop();
+            if(operator_stack.size() > 0 && *token != '(' && *token != ')'){
+                int tokenp = precedence(token), headp = precedence(operator_stack.at(operator_stack.size() - 1));
+                while(operator_stack.size() > 0 && headp > tokenp){
+                    tokenp = precedence(token);
+                    headp = precedence(operator_stack.at(operator_stack.size() - 1));
+                    
+                    output_stack->append(operator_stack.at(operator_stack.size() - 1));
+                    operator_stack.pop();
+                }
             }
-			*/
-			int headp, tokenp;
-			char* tokenstr = input_stack->at(0);
-			while(operator_stack.size() > 0){
-				headp = precedence(operator_stack.at(operator_stack.size() - 1));
-				tokenp = precedence(tokenstr);
-
-				if(headp > tokenp || (headp == tokenp && !strcmp(tokenstr, "^"))){
-					output_stack->append(operator_stack.at(operator_stack.size() - 1));
-					operator_stack.pop();
-				}
-			}
-            operator_stack.append(token); //Add the token to the operator stack, runs if there's an empty operator stack or the operator we're adding has a higher precedence
-		}
-        if (*token == '('){
-            operator_stack.append(token); //Add the ( to the operator stack
+            operator_stack.append(token);
+        }
+        if(*token == '('){
+            operator_stack.append(token);
         }
         if(*token == ')'){
-            while(*operator_stack.at(operator_stack.size () - 1) != '('){ //Go back popping operators to the output until we find the (
-                output_stack->append(operator_stack.at(operator_stack.size () -1));
+            while(*operator_stack.at(operator_stack.size() - 1) != '('){
+                output_stack->append(operator_stack.at(operator_stack.size() - 1));
                 operator_stack.pop();
             }
-            operator_stack.pop(); //Remove the (
+            operator_stack.pop();
         }
         input_stack->remove(0);
     }
@@ -151,4 +176,5 @@ void Shunting::output_handler(LinkedList* input){
 	}else if(type == 3){ //if 3, then prefix
 		prefix(head_node);
 	}
+    std::cout << std::endl;
 }
